@@ -1,6 +1,5 @@
-select
-COUNT(customer_id) as customers_count
-from customers;   
+select COUNT(customer_id) as customers_count
+from customers;
 --считает количество покупателей
 
 
