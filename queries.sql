@@ -83,8 +83,6 @@ group by age_category
 order by age_category; 
 #считает кол-во покупателей по возрастным категориям
 
-
-
 select
 	to_char(sales.sale_date, 'YYYY-MM') as selling_month,
 	count(distinct sales.customer_id) as total_customers,
