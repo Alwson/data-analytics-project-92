@@ -16,7 +16,6 @@ limit 10;
 --показывает 10 продавцов с наибольшей выручкой
 
 
-
 with sellers as
 	(
 select
@@ -36,8 +35,7 @@ from sellers
 where average_income < (select sum(income) / sum(operations) from sellers)
 order by average_income ASC;
 --показывает продавцов, чья выручка ниже, чем средняя по всем продавцам
-	
-	
+		
 	
 with days as
 	(select
@@ -68,7 +66,6 @@ select
 --показывает среднюю выручку по продавцами и дням недели 
 
 
-
 select
 	(case
 		when age between 16 and 25 then '16-25'
@@ -80,6 +77,7 @@ from customers
 group by age_category
 order by age_category; 
 --считает кол-во покупателей по возрастным категориям
+
 
 select
 	to_char(sales.sale_date, 'YYYY-MM') as selling_month,
