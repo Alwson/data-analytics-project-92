@@ -1,7 +1,7 @@
 select
 COUNT(customer_id) as customers_count
 from customers;   
-#считает количество покупателей
+--считает количество покупателей
 
 
 
@@ -15,7 +15,7 @@ left join products on sales.product_id  = products.product_id
 group by seller
 order by income desc
 limit 10; 
-#показывает 10 продавцов с наибольшей выручкой
+--показывает 10 продавцов с наибольшей выручкой
 
 
 
@@ -37,7 +37,7 @@ select
 from sellers
 where average_income < (select sum(income)/sum(operations) from sellers)
 order by average_income ASC;
-#показывает продавцов, чья выручка ниже, чем средняя по всем продавцам
+--показывает продавцов, чья выручка ниже, чем средняя по всем продавцам
 	
 	
 	
@@ -67,7 +67,7 @@ select
   from days
   group by seller, day_of_week, days.number_day_of_week
 	order by days.number_day_of_week, seller;
-#показывает среднюю выручку по продавцами и дням недели 
+--показывает среднюю выручку по продавцами и дням недели 
 
 
 
@@ -81,7 +81,7 @@ select
 from customers
 group by age_category
 order by age_category; 
-#считает кол-во покупателей по возрастным категориям
+--считает кол-во покупателей по возрастным категориям
 
 select
 	to_char(sales.sale_date, 'YYYY-MM') as selling_month,
@@ -91,7 +91,7 @@ from sales
 left join products on sales.product_id=products.product_id
 group by to_char(sales.sale_date, 'YYYY-MM')
 order by selling_month;
-#считает кол-во покупателей и выручку по месяцам
+--считает кол-во покупателей и выручку по месяцам
 
 
 with 
@@ -124,5 +124,4 @@ select
 from sn
 where sale_number=1 and income=0
 order by cust_id;
-#показывает покупателей, первая покупка которых была в ходе проведения 
-акций (акционные товары отпускали со стоимостью равной 0)
+--показывает покупателей, первая покупка которых была в ходе проведения акций (акционные товары отпускали со стоимостью равной 0)
