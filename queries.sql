@@ -31,11 +31,11 @@ with sell as (
 )
 
 select
-    seller,
-    FLOOR(average_income) as average_income
+    sell.seller,
+    FLOOR(sell.average_income) as average_income
 from sell
 where sell.average_income < (select SUM(sell.income) / SUM(sell.operations) from sell)
-order by average_income asc;
+order by sell.average_income asc;
 --показывает продавцов, чья выручка ниже, чем средняя по всем продавцам
 
 
