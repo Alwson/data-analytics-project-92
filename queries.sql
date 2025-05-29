@@ -36,7 +36,7 @@ select
 from sel2
 where
     average_income
-    < (select SUM(sel2.income) / SUM(sel2.operations) from sel2)
+    < (select SUM(sel2.income) / SUM(sel2.operations))
 order by average_income asc;
 --показывает продавцов, чья выручка ниже, чем средняя по всем продавцам
 
