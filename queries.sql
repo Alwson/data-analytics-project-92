@@ -16,7 +16,7 @@ limit 10;
 --показывает 10 продавцов с наибольшей выручкой
 
 
-with sellers as (
+with sell as (
     select
         CONCAT(employees.first_name, ' ', employees.last_name) as seller,
         COUNT(sales.sales_id) as operations,
@@ -33,8 +33,8 @@ with sellers as (
 select
     seller,
     FLOOR(average_income) as average_income
-from sellers
-where average_income < (select SUM(income) / SUM(operations) from sellers)
+from sell
+where sell.average_income < (select SUM(sell.income) / SUM(sell.operations) from sell)
 order by average_income asc;
 --показывает продавцов, чья выручка ниже, чем средняя по всем продавцам
 
@@ -132,4 +132,4 @@ select
 from sn
 where sale_number = 1 and income = 0
 order by cust_id;
---показывает покупателей, первая покупка которых была в ходе проведения акций (акционные товары отпускали со стоимостью равной 0)
+--показывает покупателей, первая покупка которых была в ходе проведения акций
