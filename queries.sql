@@ -41,13 +41,12 @@ ORDER BY average_income ASC;
 SELECT
     CONCAT(e.first_name, ' ', e.last_name) AS seller,
     TRIM(TO_CHAR(s.sale_date, 'Day')) AS day_of_week,
-    EXTRACT(ISODOW FROM s.sale_date) AS number_day_of_week,
     FLOOR(AVG(s.quantity * p.price)) AS average_income
 FROM sales s
 LEFT JOIN employees e ON s.sales_person_id = e.employee_id
 LEFT JOIN products p ON s.product_id = p.product_id
-GROUP BY seller, day_of_week, number_day_of_week
-ORDER BY number_day_of_week, seller;
+GROUP BY seller, day_of_week, EXTRACT(ISODOW FROM s.sale_date)
+ORDER BY EXTRACT(ISODOW FROM s.sale_date), seller;
 --показывает среднюю выручку по продавцами и дням недели
 
 
