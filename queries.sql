@@ -27,14 +27,14 @@ with sel2 as (
     left join products on sales.product_id = products.product_id
     group by employees.first_name, employees.last_name
 )
-    
+
 select
-    sel2.seller,
-    FLOOR(sel2.average_income) as average_income
-from sel2
+    s2.seller,
+    FLOOR(s2.average_income) as average_income
+from sel2 s2
 where
     average_income < (
-        select AVG(average_income) from sel2
+        select AVG(s2.average_income) from s2
     )
 order by average_income asc;
 --показывает продавцов, чья выручка ниже, чем средняя по всем продавцам
@@ -101,8 +101,8 @@ sn as (
         seller,
         income,
         cust_id,
-        ROW_NUMBER() OVER (
-            PARTITION by customer
+        row_number() over (
+            partition by customer
             order by sale_date
         ) as sale_number
     from income
@@ -117,6 +117,8 @@ from sn
 where sale_number = 1
 order by cust_id;
 --показывает покупателей, первая покупка которых была в ходе проведения акций
+
+
 with income as (
     select
         s.customer_id as cust_id,
@@ -124,10 +126,10 @@ with income as (
         TO_CHAR(s.sale_date, 'YYYY-MM-DD') as sale_date,
         CONCAT(e.first_name, ' ', e.last_name) as seller,
         SUM(s.quantity * p.price) as income
-    from sales as s
-    left join customers as c on s.customer_id = c.customer_id
-    left join employees as e on s.sales_person_id = e.employee_id
-    left join products as p on s.product_id = p.product_id
+    from sales s
+    left join customers c on s.customer_id = c.customer_id
+    left join employees e on s.sales_person_id = e.employee_id
+    left join products p on s.product_id = p.product_id
     group by
         c.first_name,
         c.last_name,
@@ -144,8 +146,8 @@ sn as (
         seller,
         income,
         cust_id,
-        ROW_NUMBER() OVER (
-            PARTITION by customer
+        row_number() over (
+            partition by customer
             order by sale_date
         ) as sale_number
     from income
@@ -160,5 +162,3 @@ from sn
 where sale_number = 1
 order by cust_id;
 --показывает покупателей, первая покупка которых была в ходе проведения акций
-
-
