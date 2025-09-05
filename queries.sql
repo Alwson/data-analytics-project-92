@@ -27,9 +27,10 @@ with sel2 as (
     left join products on sales.product_id = products.product_id
     group by employees.first_name, employees.last_name
 )
+    
 select
-    seller,
-    FLOOR(average_income) as average_income
+    sel2.seller,
+    FLOOR(sel2.average_income) as average_income
 from sel2
 where
     average_income < (
@@ -75,7 +76,7 @@ order by selling_month;
 --считает кол-во покупателей и выручку по месяцам
 
 
-with income AS (
+with income as (
     select
         s.customer_id as cust_id,
         CONCAT(c.first_name, ' ', c.last_name) as customer,
@@ -86,8 +87,13 @@ with income AS (
     left join customers c on s.customer_id = c.customer_id
     left join employees e on s.sales_person_id = e.employee_id
     left join products p on s.product_id = p.product_id
-    group by c.first_name, c.last_name, s.sale_date, e.first_name, e.last_name, s.customer_id
+    group by
+        c.first_name, c.last_name,
+        s.sale_date,
+        e.first_name, e.last_name,
+        s.customer_id
 ),
+
 sn as (
     select
         customer,
@@ -102,6 +108,7 @@ sn as (
     from income
     where income = 0
 )
+
 select
     customer,
     sale_date,
@@ -153,4 +160,5 @@ from sn
 where sale_number = 1
 order by cust_id;
 --показывает покупателей, первая покупка которых была в ходе проведения акций
+
 
