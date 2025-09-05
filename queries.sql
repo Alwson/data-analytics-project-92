@@ -33,8 +33,8 @@ select
     FLOOR(s2.average_income) as average_income
 from sells2 as s2
 where
-    average_income < (
-        select AVG(average_income) from s2
+    s2.average_income < (
+        select AVG(s3.average_income) from sells2 as s3
     )
 order by average_income asc;
 --показывает продавцов, чья выручка ниже, чем средняя по всем продавцам
@@ -117,3 +117,4 @@ from sn
 where sale_number = 1
 order by cust_id;
 --показывает покупателей, первая покупка которых была в ходе проведения акций
+
