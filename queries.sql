@@ -44,7 +44,7 @@ select
     CONCAT(e.first_name, ' ', e.last_name) as seller,
     LOWER(TRIM(TO_CHAR(s.sale_date, 'day'))) as day_of_week,
     FLOOR(SUM(s.quantity * p.price)) as income
-from sales as s
+from sales s
 left join employees as e on s.sales_person_id = e.employee_id
 left join products as p on s.product_id = p.product_id
 group by seller, day_of_week, EXTRACT(isodow from s.sale_date)
@@ -101,7 +101,7 @@ sn as (
         seller,
         income,
         cust_id,
-        row_number() over (
+        ROW_NUMBER() over (
             partition by customer
             order by sale_date
         ) as sale_number
@@ -146,7 +146,7 @@ sn as (
         seller,
         income,
         cust_id,
-        row_number() over (
+        ROW_NUMBER() over (
             partition by customer
             order by sale_date
         ) as sale_number
@@ -162,3 +162,4 @@ from sn
 where sale_number = 1
 order by cust_id;
 --показывает покупателей, первая покупка которых была в ходе проведения акций
+
