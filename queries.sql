@@ -16,50 +16,52 @@ limit 10;
 --показывает 10 продавцов с наибольшей выручкой
 
 
-WITH sel2 AS (
-    SELECT
-        CONCAT(employees.first_name, ' ', employees.last_name) AS seller,
-        COUNT(sales.sales_id) AS operations,
-        FLOOR(SUM(sales.quantity * products.price)) AS income,
-        AVG(sales.quantity * products.price) AS average_income
-    FROM sales
-    LEFT JOIN employees ON sales.sales_person_id = employees.employee_id
-    LEFT JOIN products ON sales.product_id = products.product_id
-    GROUP BY employees.first_name, employees.last_name
+with sel2 as (
+    select
+        CONCAT(employees.first_name, ' ', employees.last_name) as seller,
+        COUNT(sales.sales_id) as operations,
+        FLOOR(SUM(sales.quantity * products.price)) as income,
+        AVG(sales.quantity * products.price) as average_income
+    from sales
+    left join employees on sales.sales_person_id = employees.employee_id
+    left join products on sales.product_id = products.product_id
+    group by employees.first_name, employees.last_name
 )
-SELECT
+
+select
     seller,
-    FLOOR(average_income) AS average_income
-FROM sel2
-WHERE average_income < (
-    SELECT AVG(average_income) FROM sel2
-)
-ORDER BY average_income ASC;
+    FLOOR(average_income) as average_income
+from sel2
+where
+    average_income < (
+        select AVG(average_income) from sel2
+    )
+order by average_income asc;
 --показывает продавцов, чья выручка ниже, чем средняя по всем продавцам
 
 
-SELECT
-    CONCAT(e.first_name, ' ', e.last_name) AS seller,
-    LOWER(TRIM(TO_CHAR(s.sale_date, 'day'))) AS day_of_week,
-    FLOOR(SUM(s.quantity * p.price)) AS income
-FROM sales s
-LEFT JOIN employees e ON s.sales_person_id = e.employee_id
-LEFT JOIN products p ON s.product_id = p.product_id
-GROUP BY seller, day_of_week, EXTRACT(ISODOW FROM s.sale_date)
-ORDER BY EXTRACT(ISODOW FROM s.sale_date), seller;
+select
+    CONCAT(e.first_name, ' ', e.last_name) as seller,
+    LOWER(TRIM(TO_CHAR(s.sale_date, 'day'))) as day_of_week,
+    FLOOR(SUM(s.quantity * p.price)) as income
+from sales as s
+left join employees as e on s.sales_person_id = e.employee_id
+left join products as p on s.product_id = p.product_id
+group by seller, day_of_week, EXTRACT(isodow from s.sale_date)
+order by EXTRACT(isodow from s.sale_date), seller;
 --показывает среднюю выручку по продавцами и дням недели
 
 
-SELECT
-    CASE
-        WHEN age BETWEEN 16 AND 25 THEN '16-25'
-        WHEN age BETWEEN 26 AND 40 THEN '26-40'
-        WHEN age > 40 THEN '40+'
-    END AS age_category,
-    COUNT(customer_id) AS age_count
-FROM customers
-GROUP BY age_category
-ORDER BY age_category;
+select
+    case
+        when age between 16 and 25 then '16-25'
+        when age between 26 and 40 then '26-40'
+        when age > 40 then '40+'
+    end as age_category,
+    COUNT(customer_id) as age_count
+from customers
+group by age_category
+order by age_category;
 --считает кол-во покупателей по возрастным категориям
 
 
@@ -109,5 +111,46 @@ FROM sn
 WHERE sale_number = 1
 ORDER BY cust_id;
 --показывает покупателей, первая покупка которых была в ходе проведения акций
+WITH income AS (
+    SELECT
+        s.customer_id AS cust_id,
+        CONCAT(c.first_name, ' ', c.last_name) AS customer,
+        TO_CHAR(s.sale_date, 'YYYY-MM-DD') AS sale_date,
+        CONCAT(e.first_name, ' ', e.last_name) AS seller,
+        SUM(s.quantity * p.price) AS income
+    FROM sales AS s
+    LEFT JOIN customers AS c ON s.customer_id = c.customer_id
+    LEFT JOIN employees AS e ON s.sales_person_id = e.employee_id
+    LEFT JOIN products AS p ON s.product_id = p.product_id
+    GROUP BY
+        c.first_name,
+        c.last_name,
+        s.sale_date,
+        e.first_name,
+        e.last_name,
+        s.customer_id
+),
 
+sn AS (
+    SELECT
+        customer,
+        sale_date,
+        seller,
+        income,
+        cust_id,
+        ROW_NUMBER() OVER (
+            PARTITION BY customer
+            ORDER BY sale_date
+        ) AS sale_number
+    FROM income
+    WHERE income = 0
+)
 
+SELECT
+    customer,
+    sale_date,
+    seller
+FROM sn
+WHERE sale_number = 1
+ORDER BY cust_id;
+--показывает покупателей, первая покупка которых была в ходе проведения акций
