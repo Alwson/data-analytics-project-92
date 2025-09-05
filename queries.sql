@@ -16,7 +16,7 @@ limit 10;
 --показывает 10 продавцов с наибольшей выручкой
 
 
-with sel2 as (
+with s2 as (
     select
         CONCAT(employees.first_name, ' ', employees.last_name) as seller,
         COUNT(sales.sales_id) as operations,
@@ -31,9 +31,9 @@ with sel2 as (
 select
     s2.seller,
     FLOOR(s2.average_income) as average_income
-from sel2 s2
+from s2
 where
-    s2.average_income < (
+    average_income < (
         select AVG(average_income) from s2
     )
 order by average_income asc;
@@ -44,9 +44,9 @@ select
     CONCAT(e.first_name, ' ', e.last_name) as seller,
     LOWER(TRIM(TO_CHAR(s.sale_date, 'day'))) as day_of_week,
     FLOOR(SUM(s.quantity * p.price)) as income
-from sales s
-left join employees e on s.sales_person_id = e.employee_id
-left join products p on s.product_id = p.product_id
+from sales as s
+left join employees as e on s.sales_person_id = e.employee_id
+left join products as p on s.product_id = p.product_id
 group by seller, day_of_week, EXTRACT(isodow from s.sale_date)
 order by EXTRACT(isodow from s.sale_date), seller;
 --показывает среднюю выручку по продавцами и дням недели
@@ -83,10 +83,10 @@ with income as (
         TO_CHAR(s.sale_date, 'YYYY-MM-DD') as sale_date,
         CONCAT(e.first_name, ' ', e.last_name) as seller,
         SUM(s.quantity * p.price) as income
-    from sales s
-    left join customers c on s.customer_id = c.customer_id
-    left join employees e on s.sales_person_id = e.employee_id
-    left join products p on s.product_id = p.product_id
+    from sales as s
+    left join customers as c on s.customer_id = c.customer_id
+    left join employees as e on s.sales_person_id = e.employee_id
+    left join products as p on s.product_id = p.product_id
     group by
         c.first_name, c.last_name,
         s.sale_date,
@@ -117,3 +117,4 @@ from sn
 where sale_number = 1
 order by cust_id;
 --показывает покупателей, первая покупка которых была в ходе проведения акций
+
