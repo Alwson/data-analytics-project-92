@@ -33,7 +33,7 @@ select
     FLOOR(s2.average_income) as average_income
 from sel2 s2
 where
-    average_income < (
+    s2.average_income < (
         select AVG(average_income) from s2
     )
 order by average_income asc;
@@ -91,51 +91,6 @@ with income as (
         c.first_name, c.last_name,
         s.sale_date,
         e.first_name, e.last_name,
-        s.customer_id
-),
-
-sn as (
-    select
-        customer,
-        sale_date,
-        seller,
-        income,
-        cust_id,
-        ROW_NUMBER() over (
-            partition by customer
-            order by sale_date
-        ) as sale_number
-    from income
-    where income = 0
-)
-
-select
-    customer,
-    sale_date,
-    seller
-from sn
-where sale_number = 1
-order by cust_id;
---показывает покупателей, первая покупка которых была в ходе проведения акций
-
-
-with income as (
-    select
-        s.customer_id as cust_id,
-        CONCAT(c.first_name, ' ', c.last_name) as customer,
-        TO_CHAR(s.sale_date, 'YYYY-MM-DD') as sale_date,
-        CONCAT(e.first_name, ' ', e.last_name) as seller,
-        SUM(s.quantity * p.price) as income
-    from sales s
-    left join customers c on s.customer_id = c.customer_id
-    left join employees e on s.sales_person_id = e.employee_id
-    left join products p on s.product_id = p.product_id
-    group by
-        c.first_name,
-        c.last_name,
-        s.sale_date,
-        e.first_name,
-        e.last_name,
         s.customer_id
 ),
 
