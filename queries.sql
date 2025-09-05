@@ -40,8 +40,8 @@ ORDER BY average_income ASC;
 
 SELECT
     CONCAT(e.first_name, ' ', e.last_name) AS seller,
-    TRIM(TO_CHAR(s.sale_date, 'Day')) AS day_of_week,
-    FLOOR(AVG(s.quantity * p.price)) AS average_income
+    LOWER(TRIM(TO_CHAR(s.sale_date, 'Day'))) AS day_of_week,
+    FLOOR(SUM(s.quantity * p.price)) AS income
 FROM sales s
 LEFT JOIN employees e ON s.sales_person_id = e.employee_id
 LEFT JOIN products p ON s.product_id = p.product_id
@@ -53,8 +53,8 @@ ORDER BY EXTRACT(ISODOW FROM s.sale_date), seller;
 SELECT
     CASE
         WHEN age BETWEEN 16 AND 25 THEN '16-25'
-        WHEN age BETWEEN 26 AND 39 THEN '26-39'
-        WHEN age >= 40 THEN '40+'
+        WHEN age BETWEEN 26 AND 40 THEN '26-40'
+        WHEN age > 40 THEN '40+'
     END AS age_category,
     COUNT(customer_id) AS age_count
 FROM customers
@@ -109,3 +109,4 @@ FROM sn
 WHERE sale_number = 1
 ORDER BY cust_id;
 --показывает покупателей, первая покупка которых была в ходе проведения акций
+
