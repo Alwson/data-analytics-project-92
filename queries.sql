@@ -34,7 +34,7 @@ select
 from sel2 s2
 where
     average_income < (
-        select AVG(s2.average_income) from s2
+        select AVG(average_income) from s2
     )
 order by average_income asc;
 --показывает продавцов, чья выручка ниже, чем средняя по всем продавцам
@@ -45,8 +45,8 @@ select
     LOWER(TRIM(TO_CHAR(s.sale_date, 'day'))) as day_of_week,
     FLOOR(SUM(s.quantity * p.price)) as income
 from sales s
-left join employees as e on s.sales_person_id = e.employee_id
-left join products as p on s.product_id = p.product_id
+left join employees e on s.sales_person_id = e.employee_id
+left join products p on s.product_id = p.product_id
 group by seller, day_of_week, EXTRACT(isodow from s.sale_date)
 order by EXTRACT(isodow from s.sale_date), seller;
 --показывает среднюю выручку по продавцами и дням недели
@@ -162,4 +162,5 @@ from sn
 where sale_number = 1
 order by cust_id;
 --показывает покупателей, первая покупка которых была в ходе проведения акций
+
 
