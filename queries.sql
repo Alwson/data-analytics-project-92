@@ -16,7 +16,7 @@ limit 10;
 --показывает 10 продавцов с наибольшей выручкой
 
 
-with s2 as (
+with sells2 as (
     select
         CONCAT(employees.first_name, ' ', employees.last_name) as seller,
         COUNT(sales.sales_id) as operations,
@@ -31,7 +31,7 @@ with s2 as (
 select
     s2.seller,
     FLOOR(s2.average_income) as average_income
-from s2
+from sells2 as s2
 where
     average_income < (
         select AVG(average_income) from s2
@@ -117,4 +117,3 @@ from sn
 where sale_number = 1
 order by cust_id;
 --показывает покупателей, первая покупка которых была в ходе проведения акций
-
