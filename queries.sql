@@ -40,7 +40,7 @@ ORDER BY average_income ASC;
 
 SELECT
     CONCAT(e.first_name, ' ', e.last_name) AS seller,
-    LOWER(TRIM(TO_CHAR(s.sale_date, 'Day'))) AS day_of_week,
+    LOWER(TRIM(TO_CHAR(s.sale_date, 'day'))) AS day_of_week,
     FLOOR(SUM(s.quantity * p.price)) AS income
 FROM sales s
 LEFT JOIN employees e ON s.sales_person_id = e.employee_id
@@ -109,4 +109,5 @@ FROM sn
 WHERE sale_number = 1
 ORDER BY cust_id;
 --показывает покупателей, первая покупка которых была в ходе проведения акций
+
 
